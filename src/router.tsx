@@ -1,13 +1,20 @@
-import { QueryClient } from "@tanstack/react-query";
-import { createRouter } from "@tanstack/react-router";
-import { routeTree } from "./routeTree.gen";
+import { createRootRoute, createRoute, createRouter, Outlet } from '@tanstack/react-router';
+import { CivicPulseApp } from './components/CivicPulseApp';
 
-export const getRouter = () => {
-  const queryClient = new QueryClient();
+// Root layout route
+const rootRoute = createRootRoute({
+  component: () => <Outlet />,
+});
 
-  const router = createRouter({
-    routeTree,
-    context: { queryClient },
-    scrollRestoration: true,
-    defaultPreloadStaleTime: 0,
-  });
+// Index route rendering your CivicPulse application
+const indexRoute = createRoute({
+  getParentRoute: () => rootRoute,
+  path: '/',
+  component: CivicPulseApp,
+});
+
+const routeTree = rootRoute.addChildren([indexRoute]);
+
+export const router = createRouter({ routeTree });
+
+registerRouterType('hash');
